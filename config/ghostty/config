@@ -1,0 +1,44 @@
+# Ghostty terminal configuration
+# Migrated from Alacritty + Catppuccin Mocha theme
+
+# ----- Theme -----
+theme = catppuccin-mocha
+
+# ----- Font -----
+font-family = MesloLGS Nerd Font Mono
+font-size = 12
+
+# ----- Window -----
+window-padding-x = 10
+window-padding-y = 10
+window-decoration = false
+background-opacity = 0.7
+
+# ----- Behavior -----
+scrollback-limit = 100000
+copy-on-select = clipboard
+confirm-close-surface = false
+quit-after-last-window-closed = true
+shell-integration = detect
+
+# ----- Keybindings -----
+# Splits
+keybind = ctrl+shift+h=new_split:right
+keybind = ctrl+shift+b=new_split:down
+
+# Navigate splits
+keybind = alt+left=goto_split:left
+keybind = alt+right=goto_split:right
+keybind = alt+up=goto_split:top
+keybind = alt+down=goto_split:bottom
+
+# Tabs
+keybind = super+t=new_tab
+keybind = super+w=close_surface
+keybind = ctrl+left=previous_tab
+keybind = ctrl+right=next_tab
+
+# Font size
+keybind = super+equal=increase_font_size:1
+keybind = super+minus=decrease_font_size:1
+keybind = super+0=reset_font_size

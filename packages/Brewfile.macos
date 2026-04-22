@@ -1,0 +1,48 @@
+# macOS-specific packages
+
+# macOS tools
+brew "mas"
+brew "pinentry-mac"
+brew "nmap"
+
+# Terminal
+cask "ghostty"
+
+# Browsers
+cask "firefox"
+cask "google-chrome"
+
+# Dev tools
+cask "docker-desktop"
+cask "ngrok"
+cask "postman"
+
+# Communication
+cask "discord"
+cask "microsoft-teams"
+cask "slack"
+cask "telegram"
+cask "whatsapp"
+
+# Productivity
+cask "clickup"
+cask "clockify"
+cask "linear-linear"
+
+# Media & Gaming
+cask "obs"
+cask "spotify"
+cask "steam"
+
+# Security & Privacy
+cask "bitwarden"
+cask "protonvpn"
+
+# Utilities
+cask "stats"
+cask "tailscale-app"
+cask "windows-app"
+
+# Hardware
+cask "qflipper"
+cask "raspberry-pi-imager"

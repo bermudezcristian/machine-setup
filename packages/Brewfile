@@ -1,0 +1,41 @@
+# Shared cross-platform CLI tools (macOS + Linux)
+
+# Shell
+brew "fish"
+brew "starship"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+
+# Modern CLI replacements
+brew "bat"
+brew "eza"
+brew "fd"
+brew "fzf"
+brew "ripgrep"
+brew "zoxide"
+
+# Version management
+brew "mise"
+
+# Editor
+brew "neovim"
+brew "vim"
+
+# Git tools
+brew "git"
+brew "gh"
+brew "glab"
+brew "git-delta"
+brew "lazygit"
+
+# Security
+brew "gnupg"
+
+# Dev tools
+brew "htop"
+brew "jq"
+brew "stow"
+brew "tmux"
+brew "tree"
+brew "watch"
+brew "wget"

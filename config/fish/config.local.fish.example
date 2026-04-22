@@ -1,0 +1,12 @@
+# config.local.fish — Machine-specific overrides (not tracked in git)
+# Copy this file to config.local.fish and customize.
+
+# Example: favorite directory aliases
+# alias proj 'cd ~/projects/my-project'
+
+# Example: work-specific environment
+# set -gx AWS_PROFILE my-profile
+# set -gx KUBECONFIG ~/.kube/config-work
+
+# Example: proxy settings
+# set -gx HTTP_PROXY http://proxy.example.com:8080

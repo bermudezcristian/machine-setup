@@ -1,0 +1,6 @@
+build-essential
+curl
+file
+git
+procps
+pinentry-gnome3

@@ -1,0 +1,41 @@
+[core]
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true
+    side-by-side = true
+    line-numbers = true
+    syntax-theme = Catppuccin Mocha
+
+[merge]
+    conflictstyle = zdiff3
+    tool = vimdiff
+
+[diff]
+    colorMoved = default
+
+[alias]
+    history = log --all --decorate --oneline --graph
+    undo = reset --soft HEAD~1
+    amend = commit --amend --no-edit
+    branches = branch -a
+    stash-all = stash save --include-untracked
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+# Machine-specific settings (name, email, signing)
+[include]
+    path = config.local

@@ -1,0 +1,11 @@
+# Local overrides (machine-specific, may contain secrets)
+config/fish/config.local.fish
+config/git/config.local
+.zshrc.local
+
+# Neovim plugin lock (optional — remove this line if you want to pin versions)
+# config/nvim/lazy-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
