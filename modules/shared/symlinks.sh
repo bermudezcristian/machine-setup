@@ -37,7 +37,8 @@ backup_existing() {
         return 0
     fi
     if [[ -e "$dest" ]]; then
-        local backup_dir="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
+        local backup_dir
+        backup_dir="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
         mkdir -p "$backup_dir"
         local name
         name="$(basename "$dest")"

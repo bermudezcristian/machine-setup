@@ -42,3 +42,6 @@ bash <(curl -fsSL https://raw.githubusercontent.com/bermudezcristian/machine-set
 # Update everything:
 ./update.sh
 ```
+
+## Pending Work
+See [TODO.md](TODO.md) for planned improvements (Neovim LSP, tmux config, extras framework, etc.).

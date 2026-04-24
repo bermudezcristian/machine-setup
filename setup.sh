@@ -111,6 +111,7 @@ run_module() {
     if [[ -f "$module_path" ]]; then
         echo ""
         echo "--- Running: $module_path ---"
+        # shellcheck source=/dev/null
         source "$module_path"
     fi
 }
