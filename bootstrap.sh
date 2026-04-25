@@ -38,6 +38,7 @@ fi
 # Clone or update the repo
 if [ -d "$INSTALL_DIR/.git" ]; then
     echo "machine-setup already cloned. Pulling latest..."
+    git -C "$INSTALL_DIR" checkout -- . 2>/dev/null
     git -C "$INSTALL_DIR" pull --ff-only
 else
     echo "Cloning machine-setup..."
