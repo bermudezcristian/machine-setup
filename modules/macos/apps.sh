@@ -9,15 +9,12 @@ install_mas_apps() {
         return 0
     fi
 
-    # App ID : App Name
-    local -A apps=(
-        [1333542190]="1Password"
-        [408981434]="iMovie"
-        [497799835]="Xcode"
-    )
+    # App ID:App Name pairs (bash 3.2 compatible)
+    local mas_apps="1333542190:1Password 408981434:iMovie 497799835:Xcode"
 
-    for app_id in "${!apps[@]}"; do
-        local app_name="${apps[$app_id]}"
+    for entry in $mas_apps; do
+        local app_id="${entry%%:*}"
+        local app_name="${entry##*:}"
         if mas list | grep -q "$app_id"; then
             echo "$app_name already installed."
         else

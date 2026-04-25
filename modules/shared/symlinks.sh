@@ -11,7 +11,7 @@ link_with_stow() {
     for dir in "${configs[@]}"; do
         if [[ -d "$config_dir/$dir" ]]; then
             echo "Stowing $dir..."
-            stow --dir="$config_dir" --target="$HOME/.config/$dir" --restow "$dir" 2>/dev/null || {
+            stow --dir="$config_dir" --target="$HOME/.config" --restow "$dir" &>/dev/null || {
                 # If stow fails (e.g., target dir structure mismatch), fall back to manual
                 link_manual_single "$config_dir/$dir" "$HOME/.config/$dir"
             }
@@ -22,7 +22,7 @@ link_with_stow() {
     if [[ "$SHELL_CHOICE" == "fish" && -d "$config_dir/fish" ]]; then
         echo "Stowing fish config..."
         mkdir -p "$HOME/.config/fish"
-        stow --dir="$config_dir" --target="$HOME/.config/fish" --restow fish 2>/dev/null || {
+        stow --dir="$config_dir" --target="$HOME/.config" --restow fish &>/dev/null || {
             link_manual_single "$config_dir/fish" "$HOME/.config/fish"
         }
     elif [[ "$SHELL_CHOICE" == "zsh" && -f "$config_dir/zsh/.zshrc" ]]; then
