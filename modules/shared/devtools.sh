@@ -4,6 +4,7 @@
 # -------------------------------------------------
 # mise (asdf replacement)
 # -------------------------------------------------
+
 setup_mise() {
     echo "Configuring mise version manager..."
 
@@ -28,6 +29,7 @@ setup_mise() {
 # -------------------------------------------------
 # GnuPG + pinentry
 # -------------------------------------------------
+
 setup_gpg() {
     echo "Configuring GnuPG..."
 
@@ -36,13 +38,9 @@ setup_gpg() {
 
     local gpg_conf="$HOME/.gnupg/gpg-agent.conf"
 
-    # Select the right pinentry based on OS
-    local pinentry_path=""
-    if [[ "$OS" == "Darwin" ]]; then
-        pinentry_path="$(command -v pinentry-mac || true)"
-    elif [[ "$OS" == "Linux" ]]; then
-        pinentry_path="$(command -v pinentry-gnome3 || command -v pinentry-curses || true)"
-    fi
+    # Select the right pinentry for macOS
+    local pinentry_path
+    pinentry_path="$(command -v pinentry-mac || true)"
 
     if [[ -n "$pinentry_path" ]]; then
         if ! grep -q "pinentry-program" "$gpg_conf" 2>/dev/null; then
@@ -55,13 +53,14 @@ setup_gpg() {
     fi
 
     # Restart gpg-agent to apply changes
-    killall gpg-agent 2>/dev/null || true
+    gpgconf --kill gpg-agent 2>/dev/null || true
     echo "GPG configured."
 }
 
 # -------------------------------------------------
 # fzf shell integration
 # -------------------------------------------------
+
 setup_fzf() {
     echo "Configuring fzf..."
 
@@ -80,7 +79,7 @@ setup_fzf() {
         local fzf_install
         fzf_install="$(brew --prefix 2>/dev/null)/opt/fzf/install"
         if [[ -x "$fzf_install" ]]; then
-            yes | "$fzf_install" --no-bash --no-fish
+            "$fzf_install" --key-bindings --completion --no-update-rc --no-bash --no-fish
         fi
     fi
 

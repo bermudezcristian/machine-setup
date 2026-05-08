@@ -9,13 +9,21 @@ install_mas_apps() {
         return 0
     fi
 
-    # App ID:App Name pairs (bash 3.2 compatible)
-    local mas_apps="1333542190:1Password 408981434:iMovie 497799835:Xcode"
+    # Cache installed apps list
+    local installed
+    installed="$(mas list)"
 
-    for entry in $mas_apps; do
+    # App ID:App Name pairs
+    local mas_apps=(
+        "1333542190:1Password"
+        "408981434:iMovie"
+        "497799835:Xcode"
+    )
+
+    for entry in "${mas_apps[@]}"; do
         local app_id="${entry%%:*}"
         local app_name="${entry##*:}"
-        if mas list | grep -q "$app_id"; then
+        if echo "$installed" | grep -q "$app_id"; then
             echo "$app_name already installed."
         else
             echo "Installing $app_name..."
@@ -24,7 +32,7 @@ install_mas_apps() {
     done
 
     # Accept Xcode license if Xcode is installed
-    if mas list | grep -q "497799835"; then
+    if echo "$installed" | grep -q "497799835"; then
         echo "Accepting Xcode license..."
         sudo xcodebuild -license accept 2>/dev/null || true
     fi

@@ -1,6 +1,6 @@
 #!/bin/bash
 # setup.sh — Main entry point for machine-setup
-# Detects OS, parses flags, and sources modules in order.
+# Detects architecture, parses flags, and sources modules in order.
 
 set -e
 set -u
@@ -8,11 +8,8 @@ set -u
 # -------------------------------------------------
 # Globals
 # -------------------------------------------------
-OS="$(uname -s)"       # Darwin or Linux
 ARCH="$(uname -m)"     # arm64 or x86_64
 SHELL_CHOICE="fish"    # default shell
-ONLY=""                # empty = run everything
-SKIP=""                # empty = skip nothing
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # -------------------------------------------------
@@ -24,28 +21,22 @@ Usage: ./setup.sh [OPTIONS]
 
 Options:
     --shell <fish|zsh>    Shell to configure (default: fish)
-    --only <modules>      Comma-separated list of modules to run
-    --skip <modules>      Comma-separated list of modules to skip
     -h, --help            Show this help message
 
-Available modules:
-    base        Homebrew install (+ Xcode CLI tools on macOS)
-    packages    Install packages from Brewfile (+ apt on Linux)
+Modules (run in order):
+    base        Xcode CLI tools, Rosetta 2, Homebrew
+    packages    Install packages from Brewfile
     shell       Configure fish or zsh
-    terminal    Ghostty terminal config
     editor      Neovim setup
     devtools    mise, GPG, fzf, fd
-    ssh         SSH key generation and config
     fonts       Meslo LG Nerd Font
     symlinks    Link config files to ~/.config/
-    defaults    OS-specific system defaults
-    apps        macOS App Store apps (macOS only)
+    defaults    macOS system defaults (Finder, Dock, trackpad)
+    apps        Mac App Store apps
 
 Examples:
-    ./setup.sh                          # Full setup with fish
-    ./setup.sh --shell zsh              # Full setup with zsh
-    ./setup.sh --only shell,terminal    # Only configure shell and terminal
-    ./setup.sh --skip apps,defaults     # Skip apps and system defaults
+    ./setup.sh                  # Full setup with fish
+    ./setup.sh --shell zsh      # Full setup with zsh
 EOF
     exit 0
 }
@@ -63,14 +54,6 @@ while [[ $# -gt 0 ]]; do
             fi
             shift 2
             ;;
-        --only)
-            ONLY="$2"
-            shift 2
-            ;;
-        --skip)
-            SKIP="$2"
-            shift 2
-            ;;
         -h|--help)
             usage
             ;;
@@ -82,37 +65,63 @@ while [[ $# -gt 0 ]]; do
 done
 
 # -------------------------------------------------
+# macOS prerequisites
+# -------------------------------------------------
+
+install_xcode_cli() {
+    if xcode-select -p &>/dev/null; then
+        echo "Xcode Command Line Tools already installed."
+        return 0
+    fi
+
+    echo "Installing Xcode Command Line Tools..."
+    xcode-select --install
+
+    # Wait until installed (timeout after 60s)
+    local attempts=0
+    until xcode-select -p &>/dev/null; do
+        attempts=$((attempts + 1))
+        if [[ $attempts -ge 12 ]]; then
+            echo "ERROR: Xcode CLI tools install timed out after 60s." >&2
+            exit 1
+        fi
+        sleep 5
+    done
+
+    echo "Xcode Command Line Tools installed."
+}
+
+install_rosetta() {
+    if [[ "$ARCH" != "arm64" ]]; then
+        echo "Not Apple Silicon, skipping Rosetta."
+        return 0
+    fi
+
+    if /usr/bin/pgrep oahd >/dev/null 2>&1; then
+        echo "Rosetta 2 already installed."
+        return 0
+    fi
+
+    echo "Installing Rosetta 2..."
+    /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+    echo "Rosetta 2 installed."
+}
+
+# -------------------------------------------------
 # Module runner
 # -------------------------------------------------
-# Check if a module should run based on --only and --skip flags
-should_run() {
-    local module="$1"
-
-    # If --only is set, module must be in the list
-    if [[ -n "$ONLY" ]]; then
-        if ! echo ",$ONLY," | grep -q ",$module,"; then
-            return 1
-        fi
-    fi
-
-    # If --skip is set, module must NOT be in the list
-    if [[ -n "$SKIP" ]]; then
-        if echo ",$SKIP," | grep -q ",$module,"; then
-            return 1
-        fi
-    fi
-
-    return 0
-}
 
 # Source a module file if it exists
 run_module() {
     local module_path="$1"
+
     if [[ -f "$module_path" ]]; then
         echo ""
         echo "--- Running: $module_path ---"
         # shellcheck source=/dev/null
         source "$module_path"
+    else
+        echo "WARNING: module not found: $module_path" >&2
     fi
 }
 
@@ -122,73 +131,27 @@ run_module() {
 main() {
     echo "========================================"
     echo "  machine-setup"
-    echo "  OS:    $OS ($ARCH)"
+    echo "  Arch:  $ARCH"
     echo "  Shell: $SHELL_CHOICE"
     echo "========================================"
     echo ""
 
-    # --- OS prerequisites (before Homebrew) ---
-    if [[ "$OS" == "Darwin" ]]; then
-        if should_run "base"; then
-            run_module "$SCRIPT_DIR/modules/macos/xcode.sh"
-            run_module "$SCRIPT_DIR/modules/macos/rosetta.sh"
-        fi
-    elif [[ "$OS" == "Linux" ]]; then
-        if should_run "base"; then
-            run_module "$SCRIPT_DIR/modules/linux/apt.sh"
-        fi
-    fi
+    # --- macOS prerequisites ---
+    install_xcode_cli
+    install_rosetta
 
     # --- Shared modules ---
-    if should_run "base"; then
-        run_module "$SCRIPT_DIR/modules/shared/base.sh"
-    fi
+    run_module "$SCRIPT_DIR/modules/shared/base.sh"
+    run_module "$SCRIPT_DIR/modules/shared/packages.sh"
+    run_module "$SCRIPT_DIR/modules/shared/shell.sh"
+    run_module "$SCRIPT_DIR/modules/shared/editor.sh"
+    run_module "$SCRIPT_DIR/modules/shared/devtools.sh"
+    run_module "$SCRIPT_DIR/modules/shared/fonts.sh"
+    run_module "$SCRIPT_DIR/modules/shared/symlinks.sh"
 
-    if should_run "packages"; then
-        run_module "$SCRIPT_DIR/modules/shared/packages.sh"
-    fi
-
-    if should_run "shell"; then
-        run_module "$SCRIPT_DIR/modules/shared/shell.sh"
-    fi
-
-    if should_run "terminal"; then
-        run_module "$SCRIPT_DIR/modules/shared/terminal.sh"
-    fi
-
-    if should_run "editor"; then
-        run_module "$SCRIPT_DIR/modules/shared/editor.sh"
-    fi
-
-    if should_run "devtools"; then
-        run_module "$SCRIPT_DIR/modules/shared/devtools.sh"
-    fi
-
-    if should_run "ssh"; then
-        run_module "$SCRIPT_DIR/modules/shared/ssh.sh"
-    fi
-
-    if should_run "fonts"; then
-        run_module "$SCRIPT_DIR/modules/shared/fonts.sh"
-    fi
-
-    if should_run "symlinks"; then
-        run_module "$SCRIPT_DIR/modules/shared/symlinks.sh"
-    fi
-
-    # --- OS-specific modules ---
-    if [[ "$OS" == "Darwin" ]]; then
-        if should_run "defaults"; then
-            run_module "$SCRIPT_DIR/modules/macos/defaults.sh"
-        fi
-        if should_run "apps"; then
-            run_module "$SCRIPT_DIR/modules/macos/apps.sh"
-        fi
-    elif [[ "$OS" == "Linux" ]]; then
-        if should_run "defaults"; then
-            run_module "$SCRIPT_DIR/modules/linux/defaults.sh"
-        fi
-    fi
+    # --- macOS modules ---
+    run_module "$SCRIPT_DIR/modules/macos/defaults.sh"
+    run_module "$SCRIPT_DIR/modules/macos/apps.sh"
 
     echo ""
     echo "========================================"

@@ -8,14 +8,8 @@
 
 ## Medium Impact
 
-- [ ] **Extras framework** — Add a `--extras` flag to `setup.sh` to list and run optional scripts from `extras/`. Currently `extras/firefox.sh` exists but isn't discoverable.
-
 - [ ] **Docker post-install config** — Docker Desktop is installed on macOS but no post-install setup exists. Consider adding docker-compose, ctop, dive, or lazydocker.
 
 ## Low Impact
 
 - [ ] **`.shellcheckrc`** — Add a project-wide ShellCheck config at repo root (e.g., `disable=SC1091` for sourced files, `shell=bash`, `external-sources=true`).
-
-- [ ] **Expand Linux `defaults.sh`** — Currently only sets umask and one gsettings key. Add more GNOME/desktop environment customizations.
-
-- [ ] **Expand `Brewfile.linux`** — Currently only contains `pinentry`. Add Linux-specific CLI tools if needed.

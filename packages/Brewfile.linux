@@ -1,4 +1,0 @@
-# Linux-specific Homebrew formulae
-# (Most Linux GUI apps are installed via apt/flatpak, not brew)
-
-brew "pinentry"

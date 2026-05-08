@@ -1,5 +1,12 @@
 #!/bin/bash
+# extras/firefox.sh — Configure Firefox profiles (macOS only)
 set -e
+set -u
+
+if [[ "$(uname -s)" != "Darwin" ]]; then
+    echo "firefox.sh is macOS-only. Skipping."
+    exit 0
+fi
 
 PROFILES_PATH="/Users/$USER/Library/Application Support/Firefox/Profiles"
 
@@ -8,16 +15,16 @@ echo
 
 # Iterate over each profile directory
 for PROFILE_DIR in "$PROFILES_PATH"/*; do
-    if [ -d "$PROFILE_DIR" ]; then
-        PROFILE_NAME=$(basename "$PROFILE_DIR")
+    if [[ -d "$PROFILE_DIR" ]]; then
+        PROFILE_NAME="$(basename "$PROFILE_DIR")"
 
         # Skip profiles ending in ".default" (but not ".default-release")
         if [[ "$PROFILE_NAME" == *.default ]]; then
-            echo "⚠️  Skipping profile: $PROFILE_NAME (ends with .default)"
+            echo "Skipping profile: $PROFILE_NAME (ends with .default)"
             continue
         fi
 
-        echo "→ Configuring profile: $PROFILE_NAME"
+        echo "Configuring profile: $PROFILE_NAME"
 
         # 1. Ensure 'chrome' folder exists
         CHROME_FOLDER="$PROFILE_DIR/chrome"
@@ -37,7 +44,7 @@ EOF
 
         # 3. Update prefs.js with required prefs
         PREFS_FILE="$PROFILE_DIR/prefs.js"
-        if [ ! -f "$PREFS_FILE" ]; then
+        if [[ ! -f "$PREFS_FILE" ]]; then
             echo "  - prefs.js not found, skipping preference configuration"
             continue
         fi
@@ -57,7 +64,7 @@ EOF
         add_pref_if_missing "font.name.serif.x-western" "\"MesloLGL Nerd Font\""
         add_pref_if_missing "font.size.variable.x-western" "12"
 
-        echo "✓ Done with $PROFILE_NAME"
+        echo "Done with $PROFILE_NAME"
         echo
     fi
 done

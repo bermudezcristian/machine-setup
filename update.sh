@@ -2,6 +2,7 @@
 # update.sh — Update all managed tools in one command
 
 set -e
+set -u
 
 echo "========================================"
 echo "  machine-setup: update"
@@ -20,17 +21,6 @@ if command -v brew &>/dev/null; then
 fi
 
 # -------------------------------------------------
-# apt (Linux)
-# -------------------------------------------------
-if command -v apt-get &>/dev/null; then
-    echo "--- Updating apt packages ---"
-    sudo apt-get update
-    sudo apt-get upgrade -y
-    sudo apt-get autoremove -y
-    echo ""
-fi
-
-# -------------------------------------------------
 # mise
 # -------------------------------------------------
 if command -v mise &>/dev/null; then
@@ -45,7 +35,7 @@ fi
 # -------------------------------------------------
 if command -v nvim &>/dev/null; then
     echo "--- Updating Neovim plugins ---"
-    nvim --headless "+Lazy! sync" +qa 2>/dev/null || true
+    nvim --headless "+Lazy! sync" +qa || true
     echo ""
 fi
 

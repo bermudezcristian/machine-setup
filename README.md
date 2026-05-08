@@ -1,37 +1,34 @@
 # machine-setup
 
-Cross-platform bootstrap for setting up a fresh macOS or Linux machine with a single command.
+Bootstrap for setting up a fresh macOS machine with a single command.
 
 ## Quick Start
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/bermudezcristian/machine-setup/main/bootstrap.sh)
+git clone https://github.com/bermudezcristian/machine-setup.git ~/machine-setup
+cd ~/machine-setup
+./setup.sh
 ```
-
-No prerequisites needed — just a terminal and internet connection.
 
 ## What It Does
 
 | Module | Description |
 |--------|-------------|
-| **base** | Installs Homebrew (+ Xcode CLI tools on macOS, Rosetta on Apple Silicon) |
-| **packages** | Installs CLI tools and apps from Brewfile (+ apt packages on Linux) |
+| **base** | Installs Xcode CLI tools, Rosetta 2, and Homebrew |
+| **packages** | Installs CLI tools and apps from Brewfile |
 | **shell** | Configures fish (default) or zsh with Starship prompt |
-| **terminal** | Sets up Ghostty terminal with Catppuccin Mocha theme |
 | **editor** | Configures Neovim with lazy.nvim plugin management |
 | **devtools** | Installs mise (version manager), GPG, fzf + fd |
 | **fonts** | Installs Meslo LG Nerd Font |
 | **symlinks** | Links config files to `~/.config/` |
-| **defaults** | Applies system defaults (Finder, Dock, trackpad on macOS) |
-| **apps** | Installs Mac App Store apps (macOS only) |
+| **defaults** | Applies system defaults (Finder, Dock, trackpad) |
+| **apps** | Installs Mac App Store apps |
 
 ## Options
 
 ```bash
-./setup.sh                          # Full setup with fish
-./setup.sh --shell zsh              # Use zsh instead of fish
-./setup.sh --only shell,terminal    # Only run specific modules
-./setup.sh --skip apps,defaults     # Skip specific modules
+./setup.sh                  # Full setup with fish
+./setup.sh --shell zsh      # Use zsh instead of fish
 ```
 
 ## Tools Included
@@ -46,7 +43,7 @@ No prerequisites needed — just a terminal and internet connection.
 
 ## Customizing
 
-- **Packages**: Edit files in `packages/` (Brewfile, Brewfile.macos, Brewfile.linux, apt.txt)
+- **Packages**: Edit files in `packages/` (Brewfile, Brewfile.macos)
 - **Shell config**: Edit `config/fish/` or `config/zsh/`
 - **Machine-specific overrides**: Copy `*.example` files and remove the `.example` suffix
   - `config/fish/config.local.fish` — fish overrides
@@ -58,9 +55,8 @@ No prerequisites needed — just a terminal and internet connection.
 ./update.sh
 ```
 
-Updates Homebrew, mise, Neovim plugins, Fisher plugins, and apt packages in one command.
+Updates Homebrew, mise, Neovim plugins, and Fisher plugins in one command.
 
 ## Supported Platforms
 
 - macOS (Apple Silicon + Intel)
-- Linux (Debian/Ubuntu — apt-based)

@@ -28,7 +28,7 @@ setup_fish() {
     # Install Fisher (fish plugin manager)
     if ! fish -c "type -q fisher" 2>/dev/null; then
         echo "Installing Fisher plugin manager..."
-        fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher"
+        fish -c "curl -fsSL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher"
     else
         echo "Fisher already installed."
     fi

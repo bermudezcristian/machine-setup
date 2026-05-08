@@ -19,16 +19,19 @@ elif [[ -d /home/linuxbrew/.linuxbrew ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+# Cache brew prefix for plugin sourcing
+_BREW_PREFIX="$(brew --prefix 2>/dev/null)"
+
 # -------------------------------------------------
 # Zsh plugins (installed via Homebrew)
 # -------------------------------------------------
-[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && \
-    source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -f "$_BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+    source "$_BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # -------------------------------------------------
 # fzf
 # -------------------------------------------------
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 
 # Use fd as fzf backend
 if command -v fd &>/dev/null; then
@@ -59,36 +62,6 @@ if command -v zoxide &>/dev/null; then
 fi
 
 # -------------------------------------------------
-# Aliases
-# -------------------------------------------------
-alias vim='nvim'
-alias vi='nvim'
-
-if command -v eza &>/dev/null; then
-    alias ls='eza --color=auto --icons=auto'
-    alias ll='eza -la --icons=auto --git'
-    alias lt='eza --tree --level=2 --icons=auto'
-fi
-
-if command -v bat &>/dev/null; then
-    alias cat='bat'
-fi
-
-if command -v lazygit &>/dev/null; then
-    alias lg='lazygit'
-fi
-
-alias gs='git status'
-alias gd='git diff'
-alias gl='git log --oneline --graph --decorate -20'
-alias gp='git push'
-alias gpull='git pull'
-
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-
-# -------------------------------------------------
 # Completion
 # -------------------------------------------------
 autoload -Uz compinit
@@ -105,10 +78,10 @@ fi
 # -------------------------------------------------
 # Syntax highlighting (must be sourced last)
 # -------------------------------------------------
-[ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && \
-    source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+[[ -f "$_BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
+    source "$_BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # -------------------------------------------------
 # Local overrides (not tracked in git)
 # -------------------------------------------------
-[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

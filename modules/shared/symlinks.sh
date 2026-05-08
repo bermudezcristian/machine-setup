@@ -6,6 +6,8 @@ link_with_stow() {
     echo "Using GNU Stow for symlinks..."
     local config_dir="$SCRIPT_DIR/config"
 
+    mkdir -p "$HOME/.config"
+
     # Stow each config directory into ~/.config/
     local configs=(nvim ghostty starship git mise)
     for dir in "${configs[@]}"; do
