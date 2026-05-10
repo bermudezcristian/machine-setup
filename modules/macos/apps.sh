@@ -15,7 +15,6 @@ install_mas_apps() {
 
     # App ID:App Name pairs
     local mas_apps=(
-        "1333542190:1Password"
         "408981434:iMovie"
         "497799835:Xcode"
     )
@@ -30,12 +29,6 @@ install_mas_apps() {
             mas install "$app_id" || echo "Failed to install $app_name."
         fi
     done
-
-    # Accept Xcode license if Xcode is installed
-    if echo "$installed" | grep -q "497799835"; then
-        echo "Accepting Xcode license..."
-        sudo xcodebuild -license accept 2>/dev/null || true
-    fi
 
     echo "MAS apps installed."
 }

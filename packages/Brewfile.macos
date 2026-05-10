@@ -35,6 +35,7 @@ cask "spotify"
 cask "steam"
 
 # Security & Privacy
+cask "1password"
 cask "bitwarden"
 cask "protonvpn"
 

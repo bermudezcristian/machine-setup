@@ -1,6 +1,14 @@
 #!/bin/bash
 # modules/shared/base.sh — Install Homebrew (macOS, arch-aware)
 
+accept_xcode_license() {
+    # Homebrew calls into xcrun/xcodebuild and refuses to run when the Xcode
+    # license hasn't been accepted. Idempotent: a no-op when already accepted.
+    if command -v xcodebuild &>/dev/null; then
+        sudo xcodebuild -license accept 2>/dev/null || true
+    fi
+}
+
 install_homebrew() {
     if command -v brew &>/dev/null; then
         echo "Homebrew already installed."
@@ -26,4 +34,5 @@ install_homebrew() {
     echo "Homebrew is ready."
 }
 
+accept_xcode_license
 install_homebrew
