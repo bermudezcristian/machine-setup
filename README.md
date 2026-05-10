@@ -4,6 +4,14 @@ Bootstrap for setting up a fresh macOS machine with a single command.
 
 ## Quick Start
 
+On a fresh macOS install, `git` isn't available yet. Install the Xcode Command Line Tools first (this provides `git`):
+
+```bash
+xcode-select --install
+```
+
+Then clone and run:
+
 ```bash
 git clone https://github.com/bermudezcristian/machine-setup.git ~/machine-setup
 cd ~/machine-setup
