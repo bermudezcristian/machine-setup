@@ -1,89 +1,49 @@
 #!/bin/bash
-# modules/shared/symlinks.sh — Link config files to ~/.config/ and ~/
-# Uses GNU Stow if available, falls back to manual symlinks.
+# modules/shared/symlinks.sh — Link config files to ~/.config/ and ~/ using GNU Stow.
 
-link_with_stow() {
-    echo "Using GNU Stow for symlinks..."
-    local config_dir="$SCRIPT_DIR/config"
+# XDG packages: each lives at config/<pkg>/ and is stowed into ~/.config/<pkg>/
+XDG_PACKAGES=(nvim ghostty starship mise git fish)
 
-    mkdir -p "$HOME/.config"
-
-    # Stow each config directory into ~/.config/
-    local configs=(nvim ghostty starship git mise)
-    for dir in "${configs[@]}"; do
-        if [[ -d "$config_dir/$dir" ]]; then
-            echo "Stowing $dir..."
-            stow --dir="$config_dir" --target="$HOME/.config" --restow "$dir" &>/dev/null || {
-                # If stow fails (e.g., target dir structure mismatch), fall back to manual
-                link_manual_single "$config_dir/$dir" "$HOME/.config/$dir"
-            }
+# Symlinks left by previous (broken) symlink runs. We remove these before stowing
+# so that stow can build the correct per-file structure underneath ~/.config/<pkg>/.
+# Two kinds:
+#   1. Flat files at ~/.config/ from the broken stow --target=$HOME/.config invocation.
+#   2. Directory-symlinks at ~/.config/<pkg> from the old manual fallback (e.g. git).
+# Only removed if the link points into the machine-setup repo — never touches real files.
+sweep_stray_links() {
+    local stray_flat=(
+        "$HOME/.config/config.fish"
+        "$HOME/.config/conf.d"
+        "$HOME/.config/init.lua"
+        "$HOME/.config/starship.toml"
+        "$HOME/.config/config.toml"
+        "$HOME/.config/config"
+        "$HOME/.config/config.local.fish.example"
+    )
+    for f in "${stray_flat[@]}"; do
+        if [[ -L "$f" ]] && readlink "$f" | grep -q "machine-setup"; then
+            echo "Removing stray symlink: $f"
+            rm "$f"
         fi
     done
 
-    # Shell config needs special handling (goes to ~ or ~/.config/)
-    if [[ "$SHELL_CHOICE" == "fish" && -d "$config_dir/fish" ]]; then
-        echo "Stowing fish config..."
-        mkdir -p "$HOME/.config/fish"
-        stow --dir="$config_dir" --target="$HOME/.config" --restow fish &>/dev/null || {
-            link_manual_single "$config_dir/fish" "$HOME/.config/fish"
-        }
-    elif [[ "$SHELL_CHOICE" == "zsh" && -f "$config_dir/zsh/.zshrc" ]]; then
-        link_manual_single "$config_dir/zsh/.zshrc" "$HOME/.zshrc"
-    fi
-}
-
-backup_existing() {
-    local dest="$1"
-    if [[ -L "$dest" ]]; then
-        # Existing symlink — safe to remove, no backup needed
-        return 0
-    fi
-    if [[ -e "$dest" ]]; then
-        local backup_dir
-        backup_dir="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
-        mkdir -p "$backup_dir"
-        local name
-        name="$(basename "$dest")"
-        echo "Backing up $dest -> $backup_dir/$name"
-        cp -a "$dest" "$backup_dir/$name"
-    fi
-}
-
-link_manual_single() {
-    local src="$1"
-    local dest="$2"
-
-    if [[ -L "$dest" || -e "$dest" ]]; then
-        backup_existing "$dest"
-        echo "Removing existing $dest"
-        rm -rf "$dest"
-    fi
-
-    echo "Linking $src -> $dest"
-    ln -s "$src" "$dest"
-}
-
-link_manual() {
-    echo "Using manual symlinks..."
-
-    local config_dir="$SCRIPT_DIR/config"
-
-    mkdir -p "$HOME/.config"
-
-    # Config directories -> ~/.config/
-    local configs=(nvim ghostty starship git mise)
-    for dir in "${configs[@]}"; do
-        if [[ -d "$config_dir/$dir" ]]; then
-            link_manual_single "$config_dir/$dir" "$HOME/.config/$dir"
+    # Directory-symlinks at ~/.config/<pkg> pointing into the repo.
+    for pkg in "${XDG_PACKAGES[@]}"; do
+        local target="$HOME/.config/$pkg"
+        if [[ -L "$target" ]] && readlink "$target" | grep -q "machine-setup"; then
+            echo "Removing directory-symlink: $target"
+            rm "$target"
         fi
     done
+}
 
-    # Shell config
-    if [[ "$SHELL_CHOICE" == "fish" && -d "$config_dir/fish" ]]; then
-        link_manual_single "$config_dir/fish" "$HOME/.config/fish"
-    elif [[ "$SHELL_CHOICE" == "zsh" && -f "$config_dir/zsh/.zshrc" ]]; then
-        link_manual_single "$config_dir/zsh/.zshrc" "$HOME/.zshrc"
-    fi
+stow_package() {
+    local pkg="$1"
+    local target="$2"
+    local config_dir="$3"
+
+    mkdir -p "$target"
+    stow --dir="$config_dir" --target="$target" --restow "$pkg"
 }
 
 # -------------------------------------------------
@@ -91,10 +51,28 @@ link_manual() {
 # -------------------------------------------------
 echo "Linking configuration files..."
 
-if command -v stow &>/dev/null; then
-    link_with_stow
-else
-    link_manual
+if ! command -v stow &>/dev/null; then
+    echo "ERROR: GNU Stow is required but not installed." >&2
+    echo "It should have been installed via packages/Brewfile — run packages module first." >&2
+    exit 1
+fi
+
+config_dir="$SCRIPT_DIR/config"
+
+sweep_stray_links
+
+# XDG-style configs: ~/.config/<pkg>/
+for pkg in "${XDG_PACKAGES[@]}"; do
+    [[ -d "$config_dir/$pkg" ]] || continue
+    echo "Stowing $pkg -> ~/.config/$pkg/"
+    stow_package "$pkg" "$HOME/.config/$pkg" "$config_dir"
+done
+
+# Zsh: .zshrc goes directly into $HOME. Always linked regardless of SHELL_CHOICE
+# so switching shells later just works.
+if [[ -d "$config_dir/zsh" ]]; then
+    echo "Stowing zsh -> ~/"
+    stow_package "zsh" "$HOME" "$config_dir"
 fi
 
 echo "Symlinks configured."

@@ -28,7 +28,7 @@ Modules (run in order):
     packages    Install packages from Brewfile
     shell       Configure fish or zsh
     editor      Neovim setup
-    devtools    mise, GPG, fzf, fd
+    devtools    mise, GPG, fzf, Claude Code
     fonts       Meslo LG Nerd Font
     symlinks    Link config files to ~/.config/
     defaults    macOS system defaults (Finder, Dock, trackpad)

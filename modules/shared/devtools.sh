@@ -93,8 +93,9 @@ setup_fzf() {
 setup_claude_code() {
     echo "Configuring Claude Code..."
 
-    if command -v claude &>/dev/null; then
-        echo "claude already installed ($(claude --version 2>/dev/null || echo 'unknown')). Skipping."
+    # Check the install path directly — ~/.local/bin isn't on $PATH inside setup.sh's bash.
+    if [[ -x "$HOME/.local/bin/claude" ]]; then
+        echo "claude already installed ($("$HOME/.local/bin/claude" --version 2>/dev/null || echo 'unknown')). Skipping."
         return 0
     fi
 

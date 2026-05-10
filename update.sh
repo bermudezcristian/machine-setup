@@ -1,5 +1,7 @@
 #!/bin/bash
-# update.sh — Update all managed tools in one command
+# update.sh — Update all managed tools in one command.
+# Note: Claude Code is intentionally not handled here — the native installer
+# auto-updates itself in the background. See modules/shared/devtools.sh.
 
 set -e
 set -u
