@@ -23,6 +23,13 @@ fi
 _BREW_PREFIX="$(brew --prefix 2>/dev/null)"
 
 # -------------------------------------------------
+# User-local binaries (Claude Code, pipx, etc.)
+# -------------------------------------------------
+if [[ -d "$HOME/.local/bin" && ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
+# -------------------------------------------------
 # Zsh plugins (installed via Homebrew)
 # -------------------------------------------------
 [[ -f "$_BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \

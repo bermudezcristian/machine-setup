@@ -20,6 +20,13 @@ else if test -d /home/linuxbrew/.linuxbrew
 end
 
 # -------------------------------------------------
+# User-local binaries (Claude Code, pipx, etc.)
+# -------------------------------------------------
+if test -d $HOME/.local/bin
+    fish_add_path -gp $HOME/.local/bin
+end
+
+# -------------------------------------------------
 # mise (version manager)
 # -------------------------------------------------
 if command -q mise
