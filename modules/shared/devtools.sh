@@ -86,6 +86,23 @@ setup_fzf() {
     echo "fzf configured."
 }
 
+# -------------------------------------------------
+# Claude Code (native installer — auto-updates itself)
+# -------------------------------------------------
+
+setup_claude_code() {
+    echo "Configuring Claude Code..."
+
+    if command -v claude &>/dev/null; then
+        echo "claude already installed ($(claude --version 2>/dev/null || echo 'unknown')). Skipping."
+        return 0
+    fi
+
+    curl -fsSL https://claude.ai/install.sh | bash
+    echo "Claude Code installed."
+}
+
 setup_mise
 setup_gpg
 setup_fzf
+setup_claude_code
