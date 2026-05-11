@@ -6,6 +6,8 @@
 set -e
 set -u
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 echo "========================================"
 echo "  machine-setup: update"
 echo "========================================"
@@ -50,6 +52,16 @@ if command -v fish &>/dev/null; then
         fish -c "fisher update" 2>/dev/null || true
         echo ""
     fi
+fi
+
+# -------------------------------------------------
+# Dotfile symlinks (pick up any new files added under config/)
+# -------------------------------------------------
+if [[ -f "$SCRIPT_DIR/modules/shared/symlinks.sh" ]]; then
+    echo "--- Refreshing symlinks ---"
+    # shellcheck source=/dev/null
+    source "$SCRIPT_DIR/modules/shared/symlinks.sh"
+    echo ""
 fi
 
 echo "========================================"
