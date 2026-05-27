@@ -1,11 +1,15 @@
 # macOS-specific packages
 
+# Taps
+tap "manaflow-ai/cmux"
+
 # macOS tools
 brew "mas"
 brew "pinentry-mac"
 brew "nmap"
 
 # Terminal
+cask "manaflow-ai/cmux/cmux"
 cask "ghostty"
 
 # Browsers
