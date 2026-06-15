@@ -17,6 +17,7 @@ install_mas_apps() {
     local mas_apps=(
         "408981434:iMovie"
         "497799835:Xcode"
+        "1451685025:WireGuard"
     )
 
     for entry in "${mas_apps[@]}"; do
