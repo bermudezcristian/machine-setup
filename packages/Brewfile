@@ -32,6 +32,7 @@ brew "lazygit"
 brew "gnupg"
 
 # Dev tools
+brew "ansible"
 brew "azure-cli"
 brew "htop"
 brew "jq"
