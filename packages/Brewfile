@@ -30,6 +30,7 @@ brew "lazygit"
 
 # Security
 brew "gnupg"
+brew "ykman"
 
 # Dev tools
 brew "ansible"

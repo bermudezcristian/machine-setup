@@ -44,6 +44,7 @@ cask "steam"
 cask "1password"
 cask "bitwarden"
 cask "protonvpn"
+cask "yubico-authenticator"
 
 # Utilities
 cask "stats"
