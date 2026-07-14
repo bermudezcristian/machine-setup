@@ -47,7 +47,32 @@ setup_gpg() {
             echo "pinentry-program $pinentry_path" >> "$gpg_conf"
             echo "Added pinentry to gpg-agent.conf"
         fi
+
+        # Hardening: no passphrase caching, and forbid pinentry from using
+        # external caches (e.g. macOS Keychain). Every signing op re-prompts.
+        if ! grep -q "no-allow-external-cache" "$gpg_conf" 2>/dev/null; then
+            cat >> "$gpg_conf" <<'EOF'
+
+# No passphrase caching whatsoever — every signing op re-prompts
+default-cache-ttl 0
+max-cache-ttl 0
+default-cache-ttl-ssh 0
+max-cache-ttl-ssh 0
+
+# Forbid pinentry from using external caches (e.g. macOS Keychain)
+no-allow-external-cache
+EOF
+            echo "Added passphrase-caching hardening to gpg-agent.conf"
+        fi
+
         chmod 600 "$gpg_conf"
+
+        # pinentry-mac: leave the "Save in Keychain" checkbox UNCHECKED by
+        # default (it can't cache anyway given no-allow-external-cache above).
+        if [[ "$(uname)" == "Darwin" ]] && command -v defaults >/dev/null 2>&1; then
+            defaults write org.gpgtools.common UseKeychain -bool NO
+            echo "Set pinentry-mac 'Save in Keychain' checkbox to unchecked by default"
+        fi
     else
         echo "No pinentry found. Skipping GPG pinentry config."
     fi
