@@ -2,4 +2,5 @@
 node = "lts"
 python = "latest"
 awscli = "latest"
-terraform = "latest"
+# 1.9.3 required by a client project; "latest" stays first so it owns PATH.
+terraform = ["latest", "1.9.3"]
