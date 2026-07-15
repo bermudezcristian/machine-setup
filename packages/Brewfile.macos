@@ -52,5 +52,6 @@ cask "tailscale-app"
 cask "windows-app"
 
 # Hardware
+cask "elgato-stream-deck"
 cask "qflipper"
 cask "raspberry-pi-imager"
