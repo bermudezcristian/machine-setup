@@ -5,6 +5,13 @@ abbr -a dk docker
 abbr -a dkc 'docker compose'
 abbr -a dkps 'docker ps'
 
+# Dev Containers (if used)
+if command -q devcontainer
+    abbr -a dc devcontainer
+    abbr -a dcu 'devcontainer up'
+    abbr -a dce 'devcontainer exec'
+end
+
 # Kubernetes (if used)
 if command -q kubectl
     abbr -a k kubectl
