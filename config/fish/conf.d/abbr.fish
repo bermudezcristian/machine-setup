@@ -5,12 +5,14 @@ abbr -a dk docker
 abbr -a dkc 'docker compose'
 abbr -a dkps 'docker ps'
 
-# Dev Containers (if used)
-if command -q devcontainer
-    abbr -a dc devcontainer
-    abbr -a dcu 'devcontainer up'
-    abbr -a dce 'devcontainer exec'
-end
+# Dev Containers — defined unconditionally on purpose.
+# `devcontainer` is a mise-managed tool, so it isn't on PATH yet when conf.d/ is
+# sourced (mise activates later, in config.fish). A `command -q devcontainer` guard
+# here would silently never fire. Abbrs are harmless if the tool is absent — they
+# only expand when typed. Without this, `dc` falls through to /usr/bin/dc (calculator).
+abbr -a dc devcontainer
+abbr -a dcu 'devcontainer up'
+abbr -a dce 'devcontainer exec'
 
 # Kubernetes (if used)
 if command -q kubectl
