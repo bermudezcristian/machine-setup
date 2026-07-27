@@ -32,7 +32,7 @@ cask "whatsapp"
 # Productivity
 cask "clickup"
 cask "clockify"
-cask "linear-linear"
+cask "linear"
 
 # Media & Gaming
 cask "insta360-studio"
