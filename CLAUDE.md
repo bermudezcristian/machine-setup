@@ -16,6 +16,16 @@ machine-setup/
     extras/                 # Optional scripts (firefox.sh)
 ```
 
+## This repository is PUBLIC
+Nothing identifying the owner's employment or clients may be committed here. Specifically:
+- No client, employer, or project names.
+- No paths under `~/Work` (or any real work directory layout), internal repo names, or hostnames.
+- Applies to code, comments, examples, and commit messages alike.
+
+Config that needs such values must read them at runtime from an untracked file outside this
+repo (see **Local overrides** below) — commit the mechanism, never the values. Use neutral
+placeholders (`example-org`, `/path/to/project`) in any documentation or example.
+
 ## Conventions
 - **Indentation**: 4 spaces in shell scripts, tabs in Lua (Neovim config)
 - **Shell scripts**: bash with `set -e` and `set -u`. Each module is idempotent — safe to run repeatedly.
