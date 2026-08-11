@@ -9,6 +9,12 @@ if command -q eza
     alias ls 'eza --color=auto --icons=auto'
     alias ll 'eza -la --icons=auto --git'
     alias lt 'eza --tree --level=2 --icons=auto'
+
+    # Coreutils `ls -ltr` (long, oldest first, newest last). eza spells this
+    # differently: its `-t` is --time=FIELD (which timestamp to show), not
+    # "sort by time", so `ls -ltr` fails with `invalid value 'r' for '--time'`.
+    # --sort=modified is already oldest-first; --reverse would flip it to -lt.
+    alias lr 'eza -l --icons=auto --sort=modified'
 end
 
 if command -q bat
