@@ -17,6 +17,7 @@ cask "firefox"
 cask "google-chrome"
 
 # Dev tools
+cask "android-studio"
 cask "docker-desktop"
 cask "ngrok"
 cask "postman"
