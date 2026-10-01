@@ -31,6 +31,10 @@ setup_macos_defaults() {
     # Short delay until repeat
     defaults write -globalDomain InitialKeyRepeat -int 15
 
+    # ----- Language & Region -----
+    # Number format 1,234,567.89 (keys: 0 decimal, 1 grouping, 10 currency decimal, 17 currency grouping)
+    defaults write NSGlobalDomain AppleICUNumberSymbols -dict 0 '.' 1 ',' 10 '.' 17 ','
+
     # ----- Dock -----
     # Auto-hide Dock
     defaults write com.apple.dock autohide -bool true
