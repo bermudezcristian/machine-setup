@@ -21,6 +21,7 @@ cask "android-studio"
 cask "docker-desktop"
 cask "ngrok"
 cask "postman"
+cask "vscodium"
 cask "zed"
 
 # Communication
