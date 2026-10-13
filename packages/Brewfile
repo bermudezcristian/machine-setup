@@ -42,3 +42,6 @@ brew "tmux"
 brew "tree"
 brew "watch"
 brew "wget"
+
+# Media
+brew "yt-dlp"
