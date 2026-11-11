@@ -48,21 +48,36 @@ setup_gpg() {
             echo "Added pinentry to gpg-agent.conf"
         fi
 
-        # Hardening: no passphrase caching, and forbid pinentry from using
-        # external caches (e.g. macOS Keychain). Every signing op re-prompts.
-        if ! grep -q "no-allow-external-cache" "$gpg_conf" 2>/dev/null; then
-            cat >> "$gpg_conf" <<'EOF'
+        # Passphrase caching, in gpg-agent's memory only: the key stays unlocked
+        # 8 h after its last use and 12 h after the passphrase was typed, at
+        # most. Long enough to sign unattended for a working day; lock early
+        # with `gpgconf --kill gpg-agent`. SSH keys stay uncached.
+        set_gpg_agent_option() {
+            local key="$1" value="$2"
+            if grep -q "^${key} " "$gpg_conf" 2>/dev/null; then
+                sed "s/^${key} .*/${key} ${value}/" "$gpg_conf" > "$gpg_conf.tmp"
+                mv "$gpg_conf.tmp" "$gpg_conf"
+            else
+                echo "${key} ${value}" >> "$gpg_conf"
+            fi
+        }
+        set_gpg_agent_option default-cache-ttl 28800
+        set_gpg_agent_option max-cache-ttl 43200
+        set_gpg_agent_option default-cache-ttl-ssh 0
+        set_gpg_agent_option max-cache-ttl-ssh 0
+        # Older runs wrote a "no caching" comment above these lines; fix it.
+        if grep -q "^# No passphrase caching whatsoever" "$gpg_conf" 2>/dev/null; then
+            sed "s/^# No passphrase caching whatsoever.*/# Passphrase cache: 8 h after last use, 12 h max (memory only)/" \
+                "$gpg_conf" > "$gpg_conf.tmp"
+            mv "$gpg_conf.tmp" "$gpg_conf"
+        fi
+        echo "Set gpg-agent passphrase cache to 8 h idle / 12 h max"
 
-# No passphrase caching whatsoever — every signing op re-prompts
-default-cache-ttl 0
-max-cache-ttl 0
-default-cache-ttl-ssh 0
-max-cache-ttl-ssh 0
-
-# Forbid pinentry from using external caches (e.g. macOS Keychain)
-no-allow-external-cache
-EOF
-            echo "Added passphrase-caching hardening to gpg-agent.conf"
+        # Forbid pinentry from using external caches (e.g. macOS Keychain):
+        # the passphrase is never stored on disk.
+        if ! grep -q "^no-allow-external-cache" "$gpg_conf" 2>/dev/null; then
+            echo "no-allow-external-cache" >> "$gpg_conf"
+            echo "Forbade external passphrase caches in gpg-agent.conf"
         fi
 
         chmod 600 "$gpg_conf"
