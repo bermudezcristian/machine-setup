@@ -49,6 +49,7 @@ cask "protonvpn"
 cask "yubico-authenticator"
 
 # Utilities
+cask "caffeine"
 cask "stats"
 cask "tailscale-app"
 cask "windows-app"
